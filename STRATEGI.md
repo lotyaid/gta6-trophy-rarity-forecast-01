@@ -4,6 +4,6 @@ Sudut berbeda (arahan user: jangan ambil jalur paling ramai): baseline house ada
 
 1. Penghasilan trophy = distribusi waktu penyelesaian (lognormal CDF) — pemain cepat konversi duluan, sisanya makin lambat. Ekstrapolasi tren logit lurus meledak melewati asimtot (terbukti di uji sintetis: loss 0,49); CDF menang (0,17) vs persistensi (0,29) pada skenario minggu peluncuran sintetis.
 2. Penyebut (pemain terlacak) dimodelkan terpisah — lonjakan pemain baru mengencerkan rate trophy lambat; tren rate mentah tidak melihat ini.
-3. Lebar kuantil dari noise binomial jumlah penghasil + sisa fit + horizon — bukan angka tetap.
+3. Lebar kuantil dari noise binomial jumlah penghasil + sisa fit + horizon — bukan angka tetap. Kalibrasi v4 (dari nilai dev versi pertama: median meleset hanya 0,72pp tapi cakupan 90% = 0 — interval terlalu sempit di sisi atas): ekor atas diperlebar 1,35x, ekor bawah 0,9x, komponen horizon dinaikkan — kejutan minggu peluncuran (unlock, akhir pekan pertama) condong ke atas.
 
 Verifikasi lokal: format output valid di 2 practice case, deterministik, runtime 0,17 detik (batas 8 detik/case).

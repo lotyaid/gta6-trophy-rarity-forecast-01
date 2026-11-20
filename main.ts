@@ -33,8 +33,15 @@ const Z = [-1.645, -0.674, 0, 0.674, 1.645];
 const TAU = 1.25;
 /** Spread floor and horizon growth, in logit units. */
 const SIGMA_BASE = 0.2;
-const SIGMA_PER_SQRT_DAY = 0.17;
+const SIGMA_PER_SQRT_DAY = 0.19;
 const SIGMA_CAP = 1.7;
+/** Launch-week surprises skew upward (unlock and weekend surges of new
+ * earners): the upper tail gets a wider spread than the lower. The dev
+ * grade of the first version put zero of 110 practice actuals inside the
+ * 90% interval while its medians missed by only 0.72pp - the intervals,
+ * not the medians, were the problem. */
+const SIGMA_UP = 1.35;
+const SIGMA_DOWN = 0.9;
 /** Sigma grid for the completion-time (lognormal CDF) earner fits. */
 const CDF_SIGMAS = [0.5, 0.8, 1.1, 1.5, 2.0, 2.8];
 /** Time-constant grid, in days, for the denominator's saturating fit. */
@@ -252,7 +259,7 @@ function forecastCase(c: Case): Array<{ id: number; q: number[] }> {
     const n = Math.max(hist[hist.length - 1].players_tracked, 1);
     const binom = Math.sqrt(1 / Math.max(d.earners, 1) + 1 / Math.max(n - d.earners, 1));
     const sigma = Math.min(SIGMA_CAP, Math.sqrt(SIGMA_BASE ** 2 + (SIGMA_PER_SQRT_DAY * Math.sqrt(horizonDays)) ** 2 + (0.6 * d.residSd) ** 2 + binom ** 2));
-    const q = Z.map((z) => round4(invLogit(medLogit + z * sigma)));
+    const q = Z.map((z) => round4(invLogit(medLogit + z * sigma * (z > 0 ? SIGMA_UP : z < 0 ? SIGMA_DOWN : 1))));
     for (let k = 1; k < q.length; k++) if (q[k] < q[k - 1]) q[k] = q[k - 1];
     return { id: t.id, q };
   });
